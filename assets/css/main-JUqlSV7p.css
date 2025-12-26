@@ -1262,10 +1262,12 @@ button.btn {
   }
 }
 .footer__menu {
-  order: 2;
   width: 100%;
 }
 @media (max-width: 920px) {
+  .footer__menu {
+    order: 2;
+  }
   .footer__menu nav {
     display: flex;
   }
