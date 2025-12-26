@@ -768,13 +768,15 @@ button.btn {
   border-radius: 1.875rem;
   height: 100%;
   left: 0;
+  opacity: 0;
   overflow: hidden;
   position: absolute;
   top: 0;
+  transition: opacity 0.1s ease-in-out;
   width: 100%;
 }
 .why__img--active {
-  display: flex;
+  opacity: 1;
 }
 .why__img img {
   height: 100%;
@@ -1168,6 +1170,7 @@ button.btn {
   border: none;
   border-radius: 6.875rem;
   color: #fff;
+  cursor: pointer;
   font-family:
     SF Pro Display,
     sans-serif;
@@ -1176,6 +1179,10 @@ button.btn {
   height: clamp(63px, 3.7174295775rem + 0.9389671362vw, 73px);
   letter-spacing: -0.02em;
   outline: none;
+  transition: transform 0.15s ease-in-out;
+}
+.help__form-button:hover {
+  transform: scale(1.025);
 }
 .footer {
   align-items: center;
@@ -1267,6 +1274,9 @@ button.btn {
 @media (max-width: 920px) {
   .footer__menu {
     order: 2;
+  }
+  .footer__menu nav {
+    display: flex;
   }
   .footer__menu nav ul {
     display: grid;
