@@ -1,0 +1,141 @@
+(function polyfill() {
+  const relList = document.createElement("link").relList;
+  if (relList && relList.supports && relList.supports("modulepreload")) return;
+  for (const link of document.querySelectorAll('link[rel="modulepreload"]')) processPreload(link);
+  new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type !== "childList") continue;
+      for (const node of mutation.addedNodes) if (node.tagName === "LINK" && node.rel === "modulepreload") processPreload(node);
+    }
+  }).observe(document, {
+    childList: true,
+    subtree: true
+  });
+  function getFetchOpts(link) {
+    const fetchOpts = {};
+    if (link.integrity) fetchOpts.integrity = link.integrity;
+    if (link.referrerPolicy) fetchOpts.referrerPolicy = link.referrerPolicy;
+    if (link.crossOrigin === "use-credentials") fetchOpts.credentials = "include";
+    else if (link.crossOrigin === "anonymous") fetchOpts.credentials = "omit";
+    else fetchOpts.credentials = "same-origin";
+    return fetchOpts;
+  }
+  function processPreload(link) {
+    if (link.ep) return;
+    link.ep = true;
+    const fetchOpts = getFetchOpts(link);
+    fetch(link.href, fetchOpts);
+  }
+})();
+document.addEventListener("DOMContentLoaded", function() {
+  const anchorLinks = document.querySelectorAll('a[href^="#"], a[href^="/#"]');
+  anchorLinks.forEach((link) => {
+    link.addEventListener("click", function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute("href").replace(/^\/?#/, "");
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      } else {
+        const baseUrl = window.location.origin;
+        const newUrl = targetId ? `${baseUrl}/#${targetId}` : baseUrl;
+        window.location.href = newUrl;
+      }
+    });
+  });
+});
+$(".slick-slider").slick({
+  infinite: false,
+  speed: 200,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  prevArrow: document.querySelector(".reviews__arrow--prev"),
+  nextArrow: document.querySelector(".reviews__arrow--next"),
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 1
+      }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 1
+      }
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1
+      }
+    }
+    // You can unslick at a given breakpoint now by adding:
+    // settings: "unslick"
+    // instead of a settings object
+  ]
+});
+Fancybox.bind("[data-fancybox]");
+if ($(".shop__wrapper").length) {
+  new Swiper(".shop__wrapper", {
+    speed: 400,
+    spaceBetween: 20,
+    slidesPerView: 2,
+    // loop: true,
+    // centeredSlides: true,
+    navigation: {
+      nextEl: ".shop__arrow--next",
+      prevEl: ".shop__arrow--prev"
+    },
+    scrollbar: {
+      el: ".swiper-scrollbar",
+      draggable: true
+      // dragSize: 20,
+    },
+    breakpoints: {
+      320: {
+        slidesPerView: 1,
+        spaceBetween: 14
+      },
+      480: {
+        slidesPerView: 1,
+        spaceBetween: 14
+      },
+      640: {
+        slidesPerView: 2,
+        spaceBetween: 20
+      }
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", function() {
+  function isMobileDevice() {
+    const isMobileWidth = window.innerWidth <= 768;
+    const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return isMobileWidth || isMobileUserAgent;
+  }
+  function moveProductFeatures() {
+    const productFeatures = document.querySelector(".product__features");
+    const productGrid = document.querySelector(".product__grid");
+    if (productFeatures && productGrid) {
+      if (productFeatures.parentElement !== productGrid || productGrid.lastElementChild !== productFeatures) {
+        productGrid.appendChild(productFeatures);
+      }
+    }
+  }
+  if (isMobileDevice()) {
+    setTimeout(moveProductFeatures, 10);
+  }
+  window.addEventListener("resize", function() {
+    if (isMobileDevice()) {
+      setTimeout(moveProductFeatures, 10);
+    }
+  });
+});
+console.log("Приложение запущено!");
